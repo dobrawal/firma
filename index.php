@@ -1,0 +1,94 @@
+<!DOCTYPE html5>
+<html lang="pl">
+    <head>
+        <title>Firma przewozowa</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>
+            <h1>Firma przewozowa Półdarmo</h1>
+        </header>
+        <nav>
+            <a href="">kwerenda1</a>
+            <a href="">kwerenda2</a>
+            <a href="">kwerenda3</a>
+            <a href="">kwerenda4</a>
+        </nav>
+        <main>
+            <section id="left">
+                <h2>Zadania do wykonania</h2>
+                <table>
+                    <tr>
+                        <th>Zadanie do wykonania</th>
+                        <th>Data realizacji</th>
+                        <th>Akcja</th>
+                    </tr>
+                    <?php
+                        $db = mysqli_connect('localhost', 'root', '', 'przewozy');
+                        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['usun'])) 
+                        {
+                        $id = (int) $_POST['id_zadania'];
+                        mysqli_query($db, "DELETE FROM zadania WHERE id_zadania = $id");
+                        }
+                        $wynik = mysqli_query($db, "SELECT id_zadania, zadanie, data FROM zadania");
+
+                        while ($w = mysqli_fetch_assoc($wynik)) {
+                        echo "<tr>";
+                        echo "<td>" . $w['zadanie'] . "</td>";
+                        echo "<td>" . $w['data'] . "</td>";
+                        echo "<td>
+                            <form method='POST'>
+                                <input type='hidden' name='id_zadania' value='{$w['id_zadania']}'>
+                                <button type='submit' name='usun'>Usuń</button>
+                            </form>
+                        </td>";
+                        echo "</tr>";
+                        }
+
+                        mysqli_close($db);
+                    ?>
+                </table>
+                <form action="index.php" method="POST">
+                    <label for id="zad">Zadanie do wykonania
+                    <input type="text" name="zadanie" id="zad">
+                    </label>
+                    <br>
+                    <label for id="data">Data realizacji
+                    <input type="date" name="data" id="data">
+                    </label>
+                    <input type="submit" name="dodaj" value="Dodaj">
+                </form>
+                   <?php
+                    $db=mysqli_connect('localhost','root','','przewozy');
+                    if(isset($_POST['zadanie'])and isset($_POST['data']))
+                    {
+                        $zadanie=$_POST['zadanie'];
+                        $data=$_POST['data'];
+                        if(empty($zadanie)||empty($data)){
+                            echo"<h3>Nie podano jednej lub obu wartości</h3>";
+                        }
+                        else{
+                            $zapytanie="INSERT INTO zadania (`zadanie`,`data`,`osoba_id`) VALUES ('$zadanie','$data','1');";
+                            $wynik=mysqli_query($db,$zapytanie);
+                        }
+                    }
+                    mysqli_close($db);
+                  ?>
+            </section>
+            <section id="right">
+                <img src="samochód.jpg" alt="auto firmowe">
+                <h3>Nasza specjalność</h3>
+                <ul>
+                    <li>Przeprowadzki</li>
+                    <li>Przewóz mebli</li>
+                    <li>Przesyłki gabarytowe</li>
+                    <li>Wynajem pojazdów</li>
+                    <li>Zakupy towarów</li>
+                </ul>
+            </section>
+        </main>
+        <footer>
+            <p>Stronę wykonała Dobrawa</p>
+        </footer>
+    </body>
+</html>
